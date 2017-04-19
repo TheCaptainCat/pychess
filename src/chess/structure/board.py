@@ -1,4 +1,4 @@
-from . import Square
+from .square import Square
 
 
 class Board:

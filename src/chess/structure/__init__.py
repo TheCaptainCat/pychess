@@ -1,2 +1,2 @@
-from .Board import Board
-from .Square import Square
+from .board import Board
+from .square import Square
