@@ -1,5 +1,7 @@
-from chess import Board
+from chess.structure import Square
 
-b = Board(10, 10)
-print(b)
-b.printboard()
+s1 = Square('a', 2)
+s2 = Square('a', 2)
+
+print(str(s1), str(s2))
+print(s1 == s2)
