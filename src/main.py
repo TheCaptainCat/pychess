@@ -1,8 +1,14 @@
-from chess.structure import *
+#! /usr/bin/python3.5
+
+from chess.computing import *
 from chess.pieces import *
+from chess.structure import *
 
 b = Board(8, 8)
-b.set_piece(0, 0, Rook(Square(0, 0), 'w'))
-b.set_piece(1, 1, Queen(Square(1, 1), 'w'))
+r = Queen(Square(1, 1), 'w')
+b.set_piece(1, 1, r)
 
 print(b)
+
+m = Manager(b)
+print(m.compute_move_set(r))

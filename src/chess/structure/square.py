@@ -18,6 +18,9 @@ class Square:
     def __str__(self):
         return "({}, {})".format(Square.int_to_letter(self.letter), self.number)
 
+    def __repr__(self):
+        return str(self)
+
     def __eq__(self, other):
         return isinstance(other, Square) and self.number == other.number and self.letter == other.letter
 
