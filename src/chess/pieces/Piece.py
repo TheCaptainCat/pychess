@@ -4,4 +4,4 @@ class Piece:
         self.name = name
 
     def __str__(self):
-        return "{0} ({1}, {2})".format(self.name, self.square.row, self.square.column)
+        return "{0} {1}".format(self.name, str(self.square))

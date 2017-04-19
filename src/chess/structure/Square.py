@@ -11,7 +11,7 @@ class Square:
         self.row = row
 
     def __str__(self):
-        return "Square ({}, {})".format(self.column, self.row)
+        return "({}, {})".format(self.column, self.row)
 
     def __eq__(self, other):
         return isinstance(other, Square) and self.row == other.row and self.column == other.column
