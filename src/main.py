@@ -1,10 +1,8 @@
 from chess.structure import *
 from chess.pieces import *
 
-s1 = Square('a', 2)
-s2 = Square('a', 2)
+b = Board(8, 8)
+b.set_piece('A', 8, Rook(Square('A', 8), 'w'))
+b.set_piece('D', 8, Queen(Square('A', 8), 'w'))
 
-k = King(s1)
-
-print(str(s1), str(s2))
-print(k)
+print(b)

@@ -2,5 +2,6 @@ from .piece import Piece
 
 
 class Pawn(Piece):
-    def __init__(self, square):
-        Piece.__init__(self, square, "Pawn")
+    def __init__(self, square, color):
+        Piece.__init__(self, square, "Pawn", color)
+        self.char = '♙' if color == 'w' else '♟'
