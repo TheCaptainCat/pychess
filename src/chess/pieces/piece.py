@@ -15,6 +15,7 @@ class Piece:
             raise ValueError("Color must be 'w' or 'b'")
         self.color = color
         self.char = None
+        self.board = None
 
     def get_char(self):
         """Get the character for a console representation.
@@ -22,6 +23,10 @@ class Piece:
         :return: a character
         """
         return self.char
+
+    def add_to_board(self, board):
+        board.set_piece(self.square.letter, self.square.number, self)
+        self.board = board
 
     def __str__(self):
         return "{0} {1}".format(self.name, str(self.square))

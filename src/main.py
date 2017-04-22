@@ -5,6 +5,7 @@ from chess.pieces import *
 from chess.structure import *
 
 b = Board(8, 8)
+"""
 # White
 r = Rook(Square(0, 0), 'w')
 kn = Knight(Square(0, 6), 'w')
@@ -36,6 +37,10 @@ for i in range(0,8):
         b.set_piece(i, 6, Pawn(Square(i,6), 'b'))
     else:
         b.set_piece(i, 5, Pawn(Square(i, 5), 'b'))
+"""
+
+r = Knight(Square(4, 4), 'b')
+r.add_to_board(b)
 
 print(b)
 
