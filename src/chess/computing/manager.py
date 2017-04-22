@@ -33,7 +33,8 @@ class Manager:
         for (letter, number) in squares:
             letter = _knight.square.letter + letter
             number = _knight.square.number + number
-            if self.board.valid_coordinates(letter, number):
+            if self.board.valid_coordinates(letter, number) \
+                    and self.board.get_piece(letter, number) is None:
                 moves.add(Square(letter, number))
         return moves
 
@@ -43,7 +44,8 @@ class Manager:
         for (letter, number) in squares:
             letter = _king.square.letter + letter
             number = _king.square.number + number
-            if self.board.valid_coordinates(letter, number):
+            if self.board.valid_coordinates(letter, number) \
+                    and self.board.get_piece(letter, number) is None:
                 moves.add(Square(letter, number))
         return moves
 
@@ -88,7 +90,7 @@ class Manager:
         squares = set()
         number = fn(number)
         letter = fl(letter)
-        while 0 <= number < self.board.height and 0 <= letter < self.board.width:
+        while self.board.valid_coordinates(letter, number):
             if self.board.get_piece(letter, number) is not None:
                 break
             squares.add(Square(letter, number))
