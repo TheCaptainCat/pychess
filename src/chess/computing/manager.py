@@ -26,6 +26,32 @@ class Manager:
 
     def move_pawn(self, _pawn):
         moves = set()
+        if _pawn.get_color() == 'w':
+            if _pawn.get_status() is False:
+                squares = [(0, 1),(0,2)]
+            else :
+                squares = [(0, 1)]
+            diagonales = [(-1, 1), (1, 1)]
+
+        else :
+            if _pawn.get_status() is False:
+                squares = [(0, -1),(0, -2)]
+            else :
+                squares = [(0, -1)]
+            diagonales = [(-1, -1), (1, -1)]
+        for (letter, number) in diagonales:
+            letter = _pawn.square.letter + letter
+            number = _pawn.square.number + number
+            if self.board.valid_coordinates(letter, number) \
+                and self.board.get_piece(letter, number) is not None \
+                and self.board.get_piece(letter,number).get_color() != _pawn.get_color() :
+                    moves.add(Square(letter, number))
+        for (letter, number) in squares:
+            letter = _pawn.square.letter + letter
+            number = _pawn.square.number + number
+            if self.board.valid_coordinates(letter, number) \
+                    and self.board.get_piece(letter, number) is None :
+                moves.add(Square(letter, number))
         return moves
 
     def move_knight(self, _knight):

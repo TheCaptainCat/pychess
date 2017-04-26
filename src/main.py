@@ -32,4 +32,4 @@ for i in range(0, 8):
 print(b)
 
 m = Manager(b)
-print(m.compute_move_set(b.get_piece(1, 4)))
+print(m.compute_move_set(b.get_piece(2, 3)))
