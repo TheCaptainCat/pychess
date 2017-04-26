@@ -1,4 +1,5 @@
 #! /usr/bin/python3.5
+# -*- coding: utf-8 -*-
 
 from chess.computing import *
 from chess.pieces import *
@@ -31,4 +32,4 @@ for i in range(0, 8):
 print(b)
 
 m = Manager(b)
-print(m.compute_move_set(b.get_piece(1, 0)))
+print(m.compute_move_set(b.get_piece(1, 4)))

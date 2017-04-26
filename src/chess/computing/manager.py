@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from chess.pieces import *
 from chess.structure import *
 
@@ -34,7 +35,8 @@ class Manager:
             letter = _knight.square.letter + letter
             number = _knight.square.number + number
             if self.board.valid_coordinates(letter, number) \
-                    and self.board.get_piece(letter, number) is None:
+                    and (self.board.get_piece(letter, number) is None \
+                    or self.board.get_piece(letter,number).get_color() != _knight.get_color()):
                 moves.add(Square(letter, number))
         return moves
 
@@ -45,7 +47,8 @@ class Manager:
             letter = _king.square.letter + letter
             number = _king.square.number + number
             if self.board.valid_coordinates(letter, number) \
-                    and self.board.get_piece(letter, number) is None:
+                and ( self.board.get_piece(letter, number) is None \
+                or self.board.get_piece(letter, number).get_color() != _king.get_color() ):
                 moves.add(Square(letter, number))
         return moves
 
@@ -66,10 +69,10 @@ class Manager:
             return x
 
         moves = set()
-        moves.update(self.strait_blocking_line(_rook.square.letter, inc, _rook.square.number, identity))
-        moves.update(self.strait_blocking_line(_rook.square.letter, dec, _rook.square.number, identity))
-        moves.update(self.strait_blocking_line(_rook.square.letter, identity, _rook.square.number, inc))
-        moves.update(self.strait_blocking_line(_rook.square.letter, identity, _rook.square.number, dec))
+        moves.update(self.strait_blocking_line(_rook, inc, identity))
+        moves.update(self.strait_blocking_line(_rook, dec, identity))
+        moves.update(self.strait_blocking_line(_rook, identity, inc))
+        moves.update(self.strait_blocking_line(_rook, identity, dec))
         return moves
 
     def move_bishop(self, _bishop):
@@ -80,18 +83,20 @@ class Manager:
             return x - 1
 
         moves = set()
-        moves.update(self.strait_blocking_line(_bishop.square.letter, inc, _bishop.square.number, inc))
-        moves.update(self.strait_blocking_line(_bishop.square.letter, dec, _bishop.square.number, dec))
-        moves.update(self.strait_blocking_line(_bishop.square.letter, inc, _bishop.square.number, dec))
-        moves.update(self.strait_blocking_line(_bishop.square.letter, dec, _bishop.square.number, inc))
+        moves.update(self.strait_blocking_line(_bishop, inc, inc))
+        moves.update(self.strait_blocking_line(_bishop, dec, dec))
+        moves.update(self.strait_blocking_line(_bishop, inc, dec))
+        moves.update(self.strait_blocking_line(_bishop, dec, inc))
         return moves
 
-    def strait_blocking_line(self, letter, fl, number, fn):
+    def strait_blocking_line(self, piece, fl, fn):
         squares = set()
-        number = fn(number)
-        letter = fl(letter)
+        number = fn(piece.square.number)
+        letter = fl(piece.square.letter)
         while self.board.valid_coordinates(letter, number):
             if self.board.get_piece(letter, number) is not None:
+                if self.board.get_piece(letter, number).get_color() != piece.get_color() :
+                    squares.add(Square(letter, number))
                 break
             squares.add(Square(letter, number))
             number = fn(number)

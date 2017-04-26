@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Piece:
     """Represent a chess piece."""
 
@@ -23,6 +24,13 @@ class Piece:
         :return: a character
         """
         return self.char
+
+    def get_color(self):
+        """Get the color of the current piece.
+
+        :return: a char
+        """
+        return self.color
 
     def add_to_board(self, board):
         board.set_piece(self.square.letter, self.square.number, self)
