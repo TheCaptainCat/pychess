@@ -26,31 +26,31 @@ class Manager:
 
     def move_pawn(self, _pawn):
         moves = set()
-        if _pawn.get_color() == 'w':
-            if _pawn.get_status() is False:
-                squares = [(0, 1),(0,2)]
-            else :
+        if _pawn.color == 'w':
+            if _pawn.first_move_done is False:
+                squares = [(0, 1), (0, 2)]
+            else:
                 squares = [(0, 1)]
             diagonales = [(-1, 1), (1, 1)]
 
-        else :
-            if _pawn.get_status() is False:
-                squares = [(0, -1),(0, -2)]
-            else :
+        else:
+            if _pawn.first_move_done is False:
+                squares = [(0, -1), (0, -2)]
+            else:
                 squares = [(0, -1)]
             diagonales = [(-1, -1), (1, -1)]
         for (letter, number) in diagonales:
             letter = _pawn.square.letter + letter
             number = _pawn.square.number + number
             if self.board.valid_coordinates(letter, number) \
-                and self.board.get_piece(letter, number) is not None \
-                and self.board.get_piece(letter,number).get_color() != _pawn.get_color() :
-                    moves.add(Square(letter, number))
+                    and self.board.get_piece(letter, number) is not None \
+                    and self.board.get_piece(letter, number).color != _pawn.color:
+                moves.add(Square(letter, number))
         for (letter, number) in squares:
             letter = _pawn.square.letter + letter
             number = _pawn.square.number + number
             if self.board.valid_coordinates(letter, number) \
-                    and self.board.get_piece(letter, number) is None :
+                    and self.board.get_piece(letter, number) is None:
                 moves.add(Square(letter, number))
         return moves
 
@@ -61,8 +61,8 @@ class Manager:
             letter = _knight.square.letter + letter
             number = _knight.square.number + number
             if self.board.valid_coordinates(letter, number) \
-                    and (self.board.get_piece(letter, number) is None \
-                    or self.board.get_piece(letter,number).get_color() != _knight.get_color()):
+                    and (self.board.get_piece(letter, number) is None
+                         or self.board.get_piece(letter, number).color != _knight.color):
                 moves.add(Square(letter, number))
         return moves
 
@@ -73,8 +73,8 @@ class Manager:
             letter = _king.square.letter + letter
             number = _king.square.number + number
             if self.board.valid_coordinates(letter, number) \
-                and ( self.board.get_piece(letter, number) is None \
-                or self.board.get_piece(letter, number).get_color() != _king.get_color() ):
+                    and (self.board.get_piece(letter, number) is None
+                         or self.board.get_piece(letter, number).color != _king.color):
                 moves.add(Square(letter, number))
         return moves
 
@@ -115,16 +115,32 @@ class Manager:
         moves.update(self.strait_blocking_line(_bishop, dec, inc))
         return moves
 
-    def strait_blocking_line(self, piece, fl, fn):
+    def strait_blocking_line(self, _piece, fl, fn):
         squares = set()
-        number = fn(piece.square.number)
-        letter = fl(piece.square.letter)
+        number = fn(_piece.square.number)
+        letter = fl(_piece.square.letter)
         while self.board.valid_coordinates(letter, number):
             if self.board.get_piece(letter, number) is not None:
-                if self.board.get_piece(letter, number).get_color() != piece.get_color() :
+                if self.board.get_piece(letter, number).color != _piece.color:
                     squares.add(Square(letter, number))
                 break
             squares.add(Square(letter, number))
             number = fn(number)
             letter = fl(letter)
         return squares
+
+    def is_checkmate(self, color):
+        _king = self.board.get_first_piece(King, color)
+        moves = self.compute_move_set(_king)
+        moves.add(_king.square)
+        o_moves = set()
+        for _piece in self.board.get_pieces_by_color('b' if color == 'w' else 'w'):
+            o_moves.update(self.compute_move_set(_piece))
+        return len(moves.difference(o_moves)) == 0
+
+    def is_check(self, color):
+        _king = self.board.get_first_piece(King, color)
+        for _piece in self.board.get_pieces_by_color('b' if color == 'w' else 'w'):
+            if _king.square in self.compute_move_set(_piece):
+                return True
+        return False

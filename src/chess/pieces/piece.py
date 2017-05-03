@@ -18,23 +18,12 @@ class Piece:
         self.char = None
         self.board = None
 
-    def get_char(self):
-        """Get the character for a console representation.
-        
-        :return: a character
-        """
-        return self.char
-
-    def get_color(self):
-        """Get the color of the current piece.
-
-        :return: a char
-        """
-        return self.color
-
     def add_to_board(self, board):
         board.set_piece(self.square.letter, self.square.number, self)
         self.board = board
 
     def __str__(self):
         return "{0} {1}".format(self.name, str(self.square))
+
+    def __repr__(self):
+        return str(self)

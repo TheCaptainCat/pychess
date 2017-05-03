@@ -48,8 +48,37 @@ class Board:
         :param number: the row
         :return true if the given coordinates are valid.
         """
-        return isinstance(letter, int) and isinstance(number, int) \
-               and 0 <= number < self.height and 0 <= letter < self.width
+        return (isinstance(letter, int) and isinstance(number, int)
+                and 0 <= number < self.height and 0 <= letter < self.width)
+
+    def move_piece(self, old_c, new_c):
+        """Move the piece at old_c to new_c.
+
+        :param old_c: a Square
+        :param new_c: a Square
+        :raise ValueError: the coordinates must be valid
+        """
+        if not (self.valid_coordinates(old_c.letter, old_c.number)
+                or self.valid_coordinates(new_c.letter, new_c.number)):
+            raise ValueError('Invalid coordinates')
+        p = self.squares[old_c]
+        self.squares[old_c] = None
+        self.squares[new_c] = p
+
+    def get_pieces_by_color(self, color):
+        pieces = []
+        for square in self.squares:
+            if self.squares[square] is not None and self.squares[square].color == color:
+                pieces.append(self.squares[square])
+        return pieces
+
+    def get_first_piece(self, piece_type, color):
+        for piece in self.get_pieces_by_color(color):
+            if isinstance(piece, piece_type):
+                return piece
+
+    def count_pieces_by_color(self, color):
+        return len(self.get_pieces_by_color(color))
 
     def __str__(self):
         s = '  ' + ''.join([Square.int_to_letter(x) for x in range(0, self.width)]) + '\n'
@@ -60,6 +89,6 @@ class Board:
                 if cur is None:
                     s += "."
                 else:
-                    s += cur.get_char()
+                    s += cur.char
             s += '\n'
         return s
