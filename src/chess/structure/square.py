@@ -34,3 +34,7 @@ class Square:
     @staticmethod
     def letter_to_int(l):
         return ord(l) - ord('A')
+
+    @staticmethod
+    def str_to_square(s):
+        return Square(Square.letter_to_int(s[0]), int(s[1]) - 1)

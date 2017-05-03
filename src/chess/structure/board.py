@@ -1,5 +1,5 @@
 from .square import Square
-
+from chess.pieces import Pawn
 
 class Board:
     """Represent a chess board."""
@@ -64,6 +64,9 @@ class Board:
         p = self.squares[old_c]
         self.squares[old_c] = None
         self.squares[new_c] = p
+        p.square = new_c
+        if isinstance(p, Pawn):
+            p.first_move_done = True
 
     def get_pieces_by_color(self, color):
         pieces = []
