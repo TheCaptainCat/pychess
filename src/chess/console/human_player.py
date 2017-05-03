@@ -15,7 +15,7 @@ class HumanPlayer(Player):
         while not ok:
             print("Enter coordinates: e.g. A1 B2")
             try:
-                i = raw_input()
+                i = input()
                 old = Square.str_to_square(i.split(" ")[0])
                 new = Square.str_to_square(i.split(" ")[1])
             except:
