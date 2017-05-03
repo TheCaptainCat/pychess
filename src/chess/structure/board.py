@@ -83,7 +83,7 @@ class Board:
     def __str__(self):
         s = '  ' + ''.join([Square.int_to_letter(x) for x in range(0, self.width)]) + '\n'
         for number in range(0, self.width):
-            s += str(number) + '-'
+            s += str(number + 1) + '-'
             for letter in range(0, self.height):
                 cur = self.get_piece(letter, number)
                 if cur is None:

@@ -9,6 +9,28 @@ class Manager:
     def __init__(self, _board):
         self.board = _board
 
+    def setup_q_chess_board(self):
+        # White
+        King(Square(3, 0), 'w').add_to_board(self.board)
+        Rook(Square(7, 0), 'w').add_to_board(self.board)
+        Knight(Square(1, 0), 'w').add_to_board(self.board)
+        Bishop(Square(5, 0), 'w').add_to_board(self.board)
+        for i in range(0, 8):
+            if i % 2 == 0:
+                Pawn(Square(i, 1), 'w').add_to_board(self.board)
+            else:
+                Pawn(Square(i, 2), 'w').add_to_board(self.board)
+        # Black
+        Rook(Square(0, 7), 'b').add_to_board(self.board)
+        Knight(Square(6, 7), 'b').add_to_board(self.board)
+        King(Square(4, 7), 'b').add_to_board(self.board)
+        Bishop(Square(2, 7), 'b').add_to_board(self.board)
+        for i in range(0, 8):
+            if i % 2 != 0:
+                Pawn(Square(i, 6), 'b').add_to_board(self.board)
+            else:
+                Pawn(Square(i, 5), 'b').add_to_board(self.board)
+
     def compute_move_set(self, _piece):
         if isinstance(_piece, Rook):
             return self.move_rook(_piece)
