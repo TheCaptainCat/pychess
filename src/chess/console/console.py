@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from chess.structure import *
+from chess.ai import AI
 from chess.computing import *
+from chess.structure import *
 from .human_player import HumanPlayer
 
 
@@ -20,15 +21,17 @@ class Console:
         return 'w' if self.current_color == 'b' else 'b'
 
     def launch_game(self):
-        self.manager.setup_q_chess_board()
+        self.manager.setup_chess_board()
         print("Welcome to PyChess!")
         self.players[self.current_color] = HumanPlayer(self.board, self.current_color)
-        self.players[self.other_color()] = HumanPlayer(self.board, self.other_color())
+        self.players[self.other_color()] = AI(self.board, self.other_color(), 2)
         running = True
+        turn = 0
         while running:
             print(self.board)
             print("{0} player, it is your turn.".format('White' if self.current_color == 'w' else 'Black'))
             old, new = self.players[self.current_color].choose_move()
+            turn += 0.5
             piece = self.board.get_piece(old.letter, old.number)
             if piece is None:
                 print("First coordinates must designate a piece.")
@@ -44,4 +47,5 @@ class Console:
                 running = False
             else:
                 self.switch_color()
-        print('Well done {0} player! Now you can execute your opponent and rape his wife.'.format('White' if self.current_color == 'w' else 'Black'))
+        print('Well done {0} player, you won in {1} turns! Now you can execute your opponent and rape his wife.'
+              .format('White' if self.current_color == 'w' else 'Black', turn))

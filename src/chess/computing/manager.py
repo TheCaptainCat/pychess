@@ -9,6 +9,30 @@ class Manager:
     def __init__(self, _board):
         self.board = _board
 
+    def setup_chess_board(self):
+        # White
+        Rook(Square(0, 0), 'w').add_to_board(self.board)
+        Knight(Square(1, 0), 'w').add_to_board(self.board)
+        Bishop(Square(2, 0), 'w').add_to_board(self.board)
+        King(Square(3, 0), 'w').add_to_board(self.board)
+        Queen(Square(4, 0), 'w').add_to_board(self.board)
+        Bishop(Square(5, 0), 'w').add_to_board(self.board)
+        Knight(Square(6, 0), 'w').add_to_board(self.board)
+        Rook(Square(7, 0), 'w').add_to_board(self.board)
+        for i in range(0, 8):
+            Pawn(Square(i, 1), 'w').add_to_board(self.board)
+        # Black
+        Rook(Square(0, 7), 'b').add_to_board(self.board)
+        Knight(Square(1, 7), 'b').add_to_board(self.board)
+        Bishop(Square(2, 7), 'b').add_to_board(self.board)
+        King(Square(3, 7), 'b').add_to_board(self.board)
+        Queen(Square(4, 7), 'b').add_to_board(self.board)
+        Bishop(Square(5, 7), 'b').add_to_board(self.board)
+        Knight(Square(6, 7), 'b').add_to_board(self.board)
+        Rook(Square(7, 7), 'b').add_to_board(self.board)
+        for i in range(0, 8):
+            Pawn(Square(i, 6), 'b').add_to_board(self.board)
+
     def setup_q_chess_board(self):
         # White
         King(Square(3, 0), 'w').add_to_board(self.board)
@@ -45,6 +69,22 @@ class Manager:
         if isinstance(_piece, Pawn):
             return self.move_pawn(_piece)
         return None
+
+    @staticmethod
+    def get_piece_score(_piece):
+        if isinstance(_piece, Rook):
+            return 20
+        if isinstance(_piece, Bishop):
+            return 10
+        if isinstance(_piece, Queen):
+            return 50
+        if isinstance(_piece, King):
+            return 100
+        if isinstance(_piece, Knight):
+            return 20
+        if isinstance(_piece, Pawn):
+            return 1
+        return 0
 
     def move_pawn(self, _pawn):
         moves = set()
@@ -153,6 +193,8 @@ class Manager:
 
     def is_checkmate(self, color):
         _king = self.board.get_first_piece(King, color)
+        if _king is None:
+            return True
         moves = self.compute_move_set(_king)
         moves.add(_king.square)
         o_moves = set()
