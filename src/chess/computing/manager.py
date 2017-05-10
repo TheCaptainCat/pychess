@@ -73,15 +73,15 @@ class Manager:
     @staticmethod
     def get_piece_score(_piece):
         if isinstance(_piece, Rook):
-            return 20
+            return 5
         if isinstance(_piece, Bishop):
-            return 10
+            return 3
         if isinstance(_piece, Queen):
-            return 50
+            return 9
         if isinstance(_piece, King):
-            return 100
+            return 1000
         if isinstance(_piece, Knight):
-            return 20
+            return 3
         if isinstance(_piece, Pawn):
             return 1
         return 0

@@ -2,7 +2,6 @@
 from chess.ai import AI
 from chess.computing import *
 from chess.structure import *
-from .human_player import HumanPlayer
 
 
 class Console:
@@ -23,7 +22,7 @@ class Console:
     def launch_game(self):
         self.manager.setup_chess_board()
         print("Welcome to PyChess!")
-        self.players[self.current_color] = HumanPlayer(self.board, self.current_color)
+        self.players[self.current_color] = AI(self.board, self.current_color, 1)
         self.players[self.other_color()] = AI(self.board, self.other_color(), 2)
         running = True
         turn = 0
@@ -47,5 +46,6 @@ class Console:
                 running = False
             else:
                 self.switch_color()
+        print(self.board)
         print('Well done {0} player, you won in {1} turns! Now you can execute your opponent and rape his wife.'
               .format('White' if self.current_color == 'w' else 'Black', turn))

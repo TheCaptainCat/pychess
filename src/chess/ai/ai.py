@@ -11,6 +11,8 @@ class AI(Player):
         self.depth = depth
 
     def choose_move(self):
-        p = Probability(self.board, 0, self.depth, self.color, self.color)
+        p = Probability(self.board, self.depth, self.color, self.color)
         p.compute_score()
-        return p.get_best_child().squares
+        sq = p.get_best_child().squares
+        print("{0}->{1}".format(sq[0], sq[1]))
+        return sq

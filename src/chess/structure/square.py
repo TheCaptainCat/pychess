@@ -16,7 +16,7 @@ class Square:
         self.number = number
 
     def __str__(self):
-        return "({}, {})".format(Square.int_to_letter(self.letter), self.number)
+        return "({}, {})".format(Square.int_to_letter(self.letter), self.number + 1)
 
     def __repr__(self):
         return str(self)
