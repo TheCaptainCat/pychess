@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import copy
-
 from chess.computing import Manager
 
 
@@ -47,24 +45,23 @@ class Probability:
                     self.score += Manager.get_piece_score(p)
         else:  # When the maximum depth is not reached yet.
             # For each playing piece, for each move alternative, a possibility is created.
+            if self.color == self.current_color:
+                self.score = float('infinity')
+                fun = min
+            else:
+                self.score = -float('infinity')
+                fun = max
             for p in self.board.get_pieces_by_color(self.current_color):
                 for m in self.manager.compute_move_set(p):
-                    new_board = copy.deepcopy(self.board)  # The chess board is deep copied.
-                    new_board.move_piece(p.square, m)  # The piece is moved in the new hypothetical board.
-                    self.children.add(Probability(new_board, self.depth - 1, self.color,
-                                                  'w' if self.current_color == 'b' else 'b', (p.square, m)))
-            if self.color == self.current_color:
-                # If the AI is playing, the current score is the minimum opponent's score among every possibility to
-                # focus on eating the best pieces.
-                self.score = float('infinity')
-                for prob in self.children:
-                    self.score = min(self.score, prob.compute_score())
-            else:
-                # If the opponent is playing, the current score is the maximum AI's score among every possibility to
-                # focus on saving the best pieces.
-                self.score = -float('infinity')
-                for prob in self.children:
-                    self.score = max(self.score, prob.compute_score())
+                    saved_piece = self.board.get_piece(m.letter, m.number)
+                    old_p_position = p.square
+                    self.board.move_piece(p.square, m)
+                    prob = Probability(self.board, self.depth - 1, self.color,
+                                       'w' if self.current_color == 'b' else 'b', (old_p_position, m))
+                    self.score = fun(self.score, prob.compute_score())
+                    self.board.move_piece(p.square, old_p_position)
+                    self.board.set_piece(m.letter, m.number, saved_piece)
+                    self.children.add(prob)
         return self.score
 
     def get_best_child(self):
