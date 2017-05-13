@@ -25,32 +25,22 @@ class Probability:
 
     def compute_score(self):
         """Compute the probabilities using the minimax algorithm.
-        If the probability is a leaf, the heuristic is computed.
-            If the AI is playing, it returns the opponent's score.
-            It returns the AI score otherwise.
-        If the probability is not at maximum depth, it creates its children.
-            If the AI is playing, it minimises the opponent score to focus on eating pieces.
-            If not, it maximises the AI's score to focus on saving its own pieces. 
+        When the probability is a leaf, it computes the score.
+        When the probability has children, it chooses the min or max branch.
         
         :return: the computed score
         """
         if self.depth == 0:  # When the probability is a leaf.
-            if self.color == self.current_color:
-                # If the AI is playing, the current score is the opponent's score.
-                for p in self.board.get_pieces_by_color('w' if self.color == 'b' else 'b'):
-                    self.score += Manager.get_piece_score(p)
-            else:
-                # If the opponent is playing, the current score is the AI's score.
-                for p in self.board.get_pieces_by_color(self.color):
-                    self.score += Manager.get_piece_score(p)
+            for p in self.board.get_pieces_by_color(self.color):
+                self.score += Manager.get_piece_score(p)
         else:  # When the maximum depth is not reached yet.
             # For each playing piece, for each move alternative, a possibility is created.
             if self.color == self.current_color:
-                self.score = float('infinity')
-                fun = min
-            else:
                 self.score = -float('infinity')
                 fun = max
+            else:
+                self.score = float('infinity')
+                fun = min
             for p in self.board.get_pieces_by_color(self.current_color):
                 for m in self.manager.compute_move_set(p):
                     saved_piece = self.board.get_piece(m.letter, m.number)
@@ -76,10 +66,10 @@ class Probability:
 
         if self.color == self.current_color:
             # If the AI is playing, the best possibility is the one with the minimum opponent's score.
-            return min(self.children, key=get_score)
+            return max(self.children, key=get_score)
         else:
             # If the opponent is playing, the best possibility is the one with the maximum AI's score.
-            return max(self.children, key=get_score)
+            return min(self.children, key=get_score)
 
     def __repr__(self):
         return str(self.board)

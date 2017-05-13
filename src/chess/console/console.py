@@ -20,10 +20,10 @@ class Console:
         return 'w' if self.current_color == 'b' else 'b'
 
     def launch_game(self):
-        self.manager.setup_chess_board()
+        self.manager.setup_q_chess_board()
         print("Welcome to PyChess!")
         self.players[self.current_color] = AI(self.board, self.current_color, 1)
-        self.players[self.other_color()] = AI(self.board, self.other_color(), 3)
+        self.players[self.other_color()] = AI(self.board, self.other_color(), 2)
         running = True
         turn = 0
         while running:
