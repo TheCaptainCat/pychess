@@ -77,6 +77,7 @@ class GUI():
 
         self.create_canvas()
         self.draw_board()
+        self.canvas.bind("<Button-1>", self.square_on_click)
 
         self.window.mainloop()
 
@@ -167,4 +168,15 @@ class GUI():
     def get_x_y_coordinates(self, row, col):
         x = (col * self.square_dimension)
         y = (row * self.square_dimension)
+
+        return (x, y)
+
+    def square_on_click(self, event):
+        x, y = self.get_clicked_square(event)
+        print("Clicked square : ({}, {})".format(x, y))
+
+    def get_clicked_square(self, event):
+        x = event.x // self.square_dimension
+        y = event.y // self.square_dimension
+
         return (x, y)
