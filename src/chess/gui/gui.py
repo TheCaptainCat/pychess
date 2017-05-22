@@ -43,16 +43,16 @@ class GUI():
 
 
 
-        self.white_square_img = ImageTk.PhotoImage(Image.open("textures/white_square_img.png").resize((80, 80), Image.ANTIALIAS))
-        self.black_square_img = ImageTk.PhotoImage(Image.open("textures/black_square_img.png").resize((80, 80), Image.ANTIALIAS))
-        self.top_board_edge_img = ImageTk.PhotoImage(Image.open("textures/top_board_edge.png").resize((80, 80), Image.ANTIALIAS))
-        self.right_board_edge_img = ImageTk.PhotoImage(Image.open("textures/right_board_edge.png").resize((80, 80), Image.ANTIALIAS))
-        self.bottom_board_edge = ImageTk.PhotoImage(Image.open("textures/bottom_board_edge.png").resize((80, 80), Image.ANTIALIAS))
-        self.left_board_edge_img = ImageTk.PhotoImage(Image.open("textures/left_board_edge.png").resize((80, 80), Image.ANTIALIAS))
-        self.right_top_board_corner = ImageTk.PhotoImage(Image.open("textures/right_top_board_corner.png").resize((80, 80), Image.ANTIALIAS))
-        self.left_top_board_corner = ImageTk.PhotoImage(Image.open("textures/left_top_board_corner.png").resize((80, 80), Image.ANTIALIAS))
-        self.right_bottom_board_corner = ImageTk.PhotoImage(Image.open("textures/right_bottom_board_corner.png").resize((80, 80), Image.ANTIALIAS))
-        self.left_bottom_board_corner = ImageTk.PhotoImage(Image.open("textures/left_bottom_board_corner.png").resize((80, 80), Image.ANTIALIAS))
+        self.white_square_img = ImageTk.PhotoImage(Image.open("textures/white_square_img.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.black_square_img = ImageTk.PhotoImage(Image.open("textures/black_square_img.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.top_board_edge_img = ImageTk.PhotoImage(Image.open("textures/top_board_edge.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.right_board_edge_img = ImageTk.PhotoImage(Image.open("textures/right_board_edge.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.bottom_board_edge = ImageTk.PhotoImage(Image.open("textures/bottom_board_edge.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.left_board_edge_img = ImageTk.PhotoImage(Image.open("textures/left_board_edge.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.right_top_board_corner = ImageTk.PhotoImage(Image.open("textures/right_top_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.left_top_board_corner = ImageTk.PhotoImage(Image.open("textures/left_top_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.right_bottom_board_corner = ImageTk.PhotoImage(Image.open("textures/right_bottom_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.left_bottom_board_corner = ImageTk.PhotoImage(Image.open("textures/left_bottom_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
 
         self.white_rook = ImageTk.PhotoImage(Image.open("textures/white_rook.png"))
         self.white_bishop = ImageTk.PhotoImage(Image.open("textures/white_bishop.png"))
@@ -77,31 +77,14 @@ class GUI():
 
         self.create_canvas()
         self.draw_board()
+        self.draw_pieces()
         self.canvas.bind("<Button-1>", self.square_on_click)
 
         self.window.mainloop()
 
         """
 
-        for number in range(0, self.board.height):
-            for letter in range(0, self.board.width):
-                cur = self.board.get_piece(letter, number)
-                if cur is not None and isinstance(cur, Piece):
-                    i = 0
-                    if cur.color == 'b':
-                        i = i + 6
-                    if isinstance(cur, Bishop):
-                        i = i + 1
-                    elif isinstance(cur, Pawn):
-                        i = i + 2
-                    elif isinstance(cur, King):
-                        i = i + 3
-                    elif isinstance(cur, Queen):
-                        i = i + 4
-                    elif isinstance(cur, Knight):
-                        i = i + 5
-
-                    Label(self.window, height=piece_height, width=piece_width, image=pieces_img[i]).grid(row=number + 1, column=letter + 1)
+        
 
 
         
@@ -144,26 +127,26 @@ class GUI():
 
         for number in range(0, self.board.height + 2):
             for letter in range(0, self.board.width + 2):
-                x1, y1 = self.get_x_y_coordinates(number, letter)
+                x, y = self.get_x_y_coordinates(number, letter)
                 if number in [0, self.board.height + 1] and letter in [0, self.board.width + 1]:
-                    self.canvas.create_image(x1, y1, image=self.corners_img[i] , anchor='nw')
+                    self.canvas.create_image(x, y, image=self.corners_img[i] , anchor='nw')
                     i = i + 1
 
                 elif ((number in [0, self.board.height + 1] and letter in range(1, self.board.width + 1))
                       or (number in range(1, self.board.height + 1) and letter in [0, self.board.width + 1])):
                     if number == 0:
-                        self.canvas.create_image(x1, y1, image=self.top_board_edge_img, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.top_board_edge_img, anchor='nw')
                     elif number == self.board.height + 1:
-                        self.canvas.create_image(x1, y1, image=self.bottom_board_edge, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.bottom_board_edge, anchor='nw')
                     elif letter == 0:
-                        self.canvas.create_image(x1, y1, image=self.left_board_edge_img, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.left_board_edge_img, anchor='nw')
                     elif letter == self.board.width + 1:
-                        self.canvas.create_image(x1, y1, image=self.right_board_edge_img, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.right_board_edge_img, anchor='nw')
 
                 elif ((number + letter) % 2 == 0):
-                    self.canvas.create_image(x1, y1, image=self.white_square_img, anchor='nw')
+                    self.canvas.create_image(x, y, image=self.white_square_img, anchor='nw')
                 else:
-                    self.canvas.create_image(x1, y1, image=self.black_square_img, anchor='nw')
+                    self.canvas.create_image(x, y, image=self.black_square_img, anchor='nw')
 
     def get_x_y_coordinates(self, row, col):
         x = (col * self.square_dimension)
@@ -180,3 +163,24 @@ class GUI():
         y = event.y // self.square_dimension
 
         return (x, y)
+
+    def draw_pieces(self):
+        for number in range(0, self.board.height):
+            for letter in range(0, self.board.width):
+                cur = self.board.get_piece(letter, number)
+                if cur is not None and isinstance(cur, Piece):
+                    i = 0
+                    if cur.color == 'b':
+                        i = i + 6
+                    if isinstance(cur, Bishop):
+                        i = i + 1
+                    elif isinstance(cur, Pawn):
+                        i = i + 2
+                    elif isinstance(cur, King):
+                        i = i + 3
+                    elif isinstance(cur, Queen):
+                        i = i + 4
+                    elif isinstance(cur, Knight):
+                        i = i + 5
+                    x, y = self.get_x_y_coordinates(number + 1, letter + 1)
+                    self.canvas.create_image(x, y, image=self.pieces_img[i], anchor='nw')
