@@ -23,16 +23,27 @@ class Probability:
         self.score = 0
         self.children = set()
 
-    def compute_score(self):
-        """Compute the probabilities using the minimax algorithm.
+    def compute_heuristic(self):
+        """Compute the score when a probability is a leaf.
+        
+        :return: the computed score.
+        """
+        score = 0
+        for p in self.board.get_pieces_by_color(self.color):
+            score += Manager.get_piece_score(p)
+        return score
+
+    def compute_score(self, alpha=-float('infinity'), beta=float('infinity')):
+        """Compute the probabilities using the minimax algorithm, with alpha beta pruning.
         When the probability is a leaf, it computes the score.
         When the probability has children, it chooses the min or max branch.
         
+        :param alpha: the alpha parameter
+        :param beta: the beta parameter
         :return: the computed score
         """
         if self.depth == 0:  # When the probability is a leaf.
-            for p in self.board.get_pieces_by_color(self.color):
-                self.score += Manager.get_piece_score(p)
+            self.score = self.compute_heuristic()
         else:  # When the maximum depth is not reached yet.
             # For each playing piece, for each move alternative, a possibility is created.
             if self.color == self.current_color:
@@ -48,10 +59,21 @@ class Probability:
                     self.board.move_piece(p.square, m)
                     prob = Probability(self.board, self.depth - 1, self.color,
                                        'w' if self.current_color == 'b' else 'b', (old_p_position, m))
-                    self.score = fun(self.score, prob.compute_score())
+                    self.score = fun(self.score, prob.compute_score(alpha, beta))
                     self.board.move_piece(p.square, old_p_position)
                     self.board.set_piece(m.letter, m.number, saved_piece)
                     self.children.add(prob)
+                    if self.color == self.current_color:
+                        if self.score >= beta:
+                            return self.score
+                        else:
+                            alpha = max(alpha, self.score)
+                    if self.color != self.current_color:
+                        if alpha >= self.score:
+                            return self.score
+                        else:
+                            beta = min(beta, self.score)
+
         return self.score
 
     def get_best_child(self):
@@ -61,6 +83,7 @@ class Probability:
         
         :return: the best possibility
         """
+
         def get_score(prob):
             return prob.score
 

@@ -23,7 +23,7 @@ class Console:
         self.manager.setup_q_chess_board()
         print("Welcome to PyChess!")
         self.players[self.current_color] = AI(self.board, self.current_color, 1)
-        self.players[self.other_color()] = AI(self.board, self.other_color(), 2)
+        self.players[self.other_color()] = AI(self.board, self.other_color(), 3)
         running = True
         turn = 0
         while running:
