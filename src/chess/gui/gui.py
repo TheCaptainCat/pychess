@@ -60,6 +60,22 @@ class GUI():
         self.current_piece_white_square_img = ImageTk.PhotoImage(Image.open("textures/current_piece_white_square.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
         self.highlighted_black_square_with_piece_img = ImageTk.PhotoImage(Image.open("textures/highlighted_black_square_with_piece_img.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
         self.highlighted_white_square_with_piece_img = ImageTk.PhotoImage(Image.open("textures/highlighted_white_square_with_piece_img.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_1_img = ImageTk.PhotoImage(Image.open("textures/1.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_2_img = ImageTk.PhotoImage(Image.open("textures/2.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_3_img = ImageTk.PhotoImage(Image.open("textures/3.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_4_img = ImageTk.PhotoImage(Image.open("textures/4.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_5_img = ImageTk.PhotoImage(Image.open("textures/5.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_6_img = ImageTk.PhotoImage(Image.open("textures/6.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_7_img = ImageTk.PhotoImage(Image.open("textures/7.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.number_8_img = ImageTk.PhotoImage(Image.open("textures/8.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_a_img = ImageTk.PhotoImage(Image.open("textures/a.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_b_img = ImageTk.PhotoImage(Image.open("textures/b.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_c_img = ImageTk.PhotoImage(Image.open("textures/c.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_d_img = ImageTk.PhotoImage(Image.open("textures/d.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_e_img = ImageTk.PhotoImage(Image.open("textures/e.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_f_img = ImageTk.PhotoImage(Image.open("textures/f.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_g_img = ImageTk.PhotoImage(Image.open("textures/g.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.letter_h_img = ImageTk.PhotoImage(Image.open("textures/h.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
 
         self.white_rook = ImageTk.PhotoImage(Image.open("textures/white_rook.png"))
         self.white_bishop = ImageTk.PhotoImage(Image.open("textures/white_bishop.png"))
@@ -82,6 +98,11 @@ class GUI():
                            self.white_knight, self.black_rook, self.black_bishop, self.black_pawn, self.black_king,
                            self.black_queen, self.black_knight]
 
+        self.letters_img = [self.letter_a_img, self.letter_b_img, self.letter_c_img ,self.letter_d_img,
+                            self.letter_e_img, self.letter_f_img, self.letter_g_img, self.letter_h_img]
+        self.numbers_img = [self.number_1_img, self.number_2_img, self.number_3_img, self.number_4_img,
+                            self.number_5_img, self.number_6_img, self.number_7_img, self.number_8_img]
+
         self.create_canvas()
         self.draw_board()
         self.draw_pieces()
@@ -100,7 +121,7 @@ class GUI():
         self.canvas.pack()
 
     def draw_board(self):
-        i = 0
+        i = j = k = l = m = 0
         for number in range(0, self.board.height + 2):
             for letter in range(0, self.board.width + 2):
                 x, y = self.get_x_y_coordinates(number, letter)
@@ -118,12 +139,20 @@ class GUI():
                       or (number in range(1, self.board.height + 1) and letter in [0, self.board.width + 1])):
                     if number == 0:
                         self.canvas.create_image(x, y, image=self.bottom_board_edge_img, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.letters_img[j], anchor='nw')
+                        j = j + 1
                     elif number == self.board.height + 1:
                         self.canvas.create_image(x, y, image=self.top_board_edge_img, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.letters_img[k], anchor='nw')
+                        k = k + 1
                     elif letter == 0:
                         self.canvas.create_image(x, y, image=self.left_board_edge_img, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.numbers_img[l], anchor='nw')
+                        l = l + 1
                     elif letter == self.board.width + 1:
                         self.canvas.create_image(x, y, image=self.right_board_edge_img, anchor='nw')
+                        self.canvas.create_image(x, y, image=self.numbers_img[m], anchor='nw')
+                        m = m + 1
 
                 elif ((number + letter) % 2 == 0):
                     if self.source_of_the_move:
