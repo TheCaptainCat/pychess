@@ -101,7 +101,6 @@ class GUI():
 
     def draw_board(self):
         i = 0
-        print("draw")
         for number in range(0, self.board.height + 2):
             for letter in range(0, self.board.width + 2):
                 x, y = self.get_x_y_coordinates(number, letter)
@@ -153,19 +152,17 @@ class GUI():
 
     def get_x_y_coordinates(self, row, col):
         x = (col * self.square_dimension)
-        y = ((9 - row) * self.square_dimension)
+        y = (((self.board.height + 1) - row) * self.square_dimension)
 
         return (x, y)
 
     def square_on_click(self, event):
         x, y = self.get_clicked_square(event)
-        print("Clicked square : ({}, {})".format(x, y))
         current_piece = self.board.get_piece(x - 1, y - 1)
         current_square = Square.canvas_to_square(x - 1, y - 1)
 
         if self.source_of_the_move:
                 if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
-                    print("New Source")
                     self.source_of_the_move = current_piece
                 elif self.validate_move(self.source_of_the_move, current_square):
                         self.board.move_piece(self.source_of_the_move.square, current_square)
@@ -186,7 +183,7 @@ class GUI():
 
     def get_clicked_square(self, event):
         x = event.x // self.square_dimension
-        y = 9 - event.y // self.square_dimension
+        y = (self.board.height + 1) - event.y // self.square_dimension
 
         return (x, y)
 
