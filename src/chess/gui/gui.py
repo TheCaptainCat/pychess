@@ -56,6 +56,10 @@ class GUI():
         self.left_bottom_board_corner_img = ImageTk.PhotoImage(Image.open("textures/left_bottom_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
         self.highlighted_black_square_img = ImageTk.PhotoImage(Image.open("textures/highlighted_black_square_img.png").resize((self.square_dimension, self.square_dimension),Image.ANTIALIAS))
         self.highlighted_white_square_img = ImageTk.PhotoImage(Image.open("textures/highlighted_white_square_img.png").resize((self.square_dimension, self.square_dimension),Image.ANTIALIAS))
+        self.current_piece_black_square_img = ImageTk.PhotoImage(Image.open("textures/current_piece_black_square.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.current_piece_white_square_img = ImageTk.PhotoImage(Image.open("textures/current_piece_white_square.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.highlighted_black_square_with_piece_img = ImageTk.PhotoImage(Image.open("textures/highlighted_black_square_with_piece_img.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.highlighted_white_square_with_piece_img = ImageTk.PhotoImage(Image.open("textures/highlighted_white_square_with_piece_img.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
 
         self.white_rook = ImageTk.PhotoImage(Image.open("textures/white_rook.png"))
         self.white_bishop = ImageTk.PhotoImage(Image.open("textures/white_bishop.png"))
@@ -102,6 +106,11 @@ class GUI():
             for letter in range(0, self.board.width + 2):
                 x, y = self.get_x_y_coordinates(number, letter)
                 current_square = Square.canvas_to_square(letter - 1,number - 1)
+
+                if self.source_of_the_move:
+                    moves = self.manager.compute_move_set(self.source_of_the_move)
+                    eatable_pieces, reachable_squares = self.manager.split_eatable_pieces_and_reachable_squares(moves, self.current_color)
+
                 if number in [0, self.board.height + 1] and letter in [0, self.board.width + 1]:
                     self.canvas.create_image(x, y, image=self.corners_img[i] , anchor='nw')
                     i = i + 1
@@ -118,15 +127,27 @@ class GUI():
                         self.canvas.create_image(x, y, image=self.right_board_edge_img, anchor='nw')
 
                 elif ((number + letter) % 2 == 0):
-                    if self.source_of_the_move and current_square in self.manager.compute_move_set(self.source_of_the_move):
-                        self.canvas.create_image(x, y, image=self.highlighted_white_square_img, anchor='nw')
-                        print("highlight1")
+                    if self.source_of_the_move:
+                        if current_square in reachable_squares:
+                            self.canvas.create_image(x, y, image=self.highlighted_white_square_img, anchor='nw')
+                        elif current_square in eatable_pieces:
+                            self.canvas.create_image(x, y, image=self.highlighted_white_square_with_piece_img, anchor='nw')
+                        elif current_square == self.source_of_the_move.square:
+                            self.canvas.create_image(x, y, image=self.current_piece_white_square_img, anchor='nw')
+                        else:
+                            self.canvas.create_image(x, y, image=self.white_square_img, anchor='nw')
                     else:
                         self.canvas.create_image(x, y, image=self.white_square_img, anchor='nw')
                 else:
-                    if self.source_of_the_move and current_square in self.manager.compute_move_set(self.source_of_the_move):
-                        self.canvas.create_image(x, y, image=self.highlighted_black_square_img, anchor='nw')
-                        print("highlight2")
+                    if self.source_of_the_move:
+                        if current_square in reachable_squares:
+                            self.canvas.create_image(x, y, image=self.highlighted_black_square_img, anchor='nw')
+                        elif current_square in eatable_pieces:
+                            self.canvas.create_image(x, y, image=self.highlighted_black_square_with_piece_img, anchor='nw')
+                        elif current_square == self.source_of_the_move.square:
+                            self.canvas.create_image(x, y, image=self.current_piece_black_square_img, anchor='nw')
+                        else:
+                            self.canvas.create_image(x, y, image=self.black_square_img, anchor='nw')
                     else:
                         self.canvas.create_image(x, y, image=self.black_square_img, anchor='nw')
 
@@ -158,9 +179,8 @@ class GUI():
                     self.source_of_the_move = None
         elif self.validate_source(current_piece):
             self.source_of_the_move = current_piece
-            print("New Source2")
 
-        """self.highlight_available_moves(self.source_of_the_move)"""
+        self.clear_canvas()
         self.draw_board()
         self.draw_pieces()
 
@@ -173,7 +193,7 @@ class GUI():
     def draw_pieces(self):
         for number in range(0, self.board.height):
             for letter in range(0, self.board.width):
-                cur = self.board.get_piece(letter, number)
+                cur = self.board.get_piece(self.board.width - 1 - letter,self.board.height - 1 - number)
                 if cur is not None and isinstance(cur, Piece):
                     i = 0
                     if cur.color == 'b':
@@ -188,14 +208,13 @@ class GUI():
                         i = i + 4
                     elif isinstance(cur, Knight):
                         i = i + 5
-                    x, y = self.get_x_y_coordinates(number + 1, letter + 1)
+                    x, y = self.get_x_y_coordinates(self.board.height - number, self.board.width - letter)
                     self.canvas.create_image(x + 40, y + 30, image=self.pieces_img[i], anchor='center')
 
     def validate_move(self, old, new):
 
         is_valid = True
         piece = self.board.get_piece(old.square.letter, old.square.number)
-        print(new)
         if not self.validate_source(piece):
             is_valid = False
         elif new not in self.manager.compute_move_set(piece):
@@ -216,3 +235,6 @@ class GUI():
             print("You must choose your color! Ya dumb fuck...")
             is_valid = False
         return is_valid
+
+    def clear_canvas(self):
+        self.canvas.delete("all")

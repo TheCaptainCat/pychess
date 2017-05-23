@@ -166,3 +166,15 @@ class Manager:
             if _king.square in self.compute_move_set(_piece):
                 return True
         return False
+
+    def split_eatable_pieces_and_reachable_squares(self, moves, color):
+        eatable_pieces = set()
+        reachable_squares = set()
+        for square in moves:
+            if self.board.valid_coordinates(square.letter, square.number):
+                    if self.board.get_piece(square.letter, square.number) is not None \
+                        and self.board.get_piece(square.letter, square.number).color != color:
+                        eatable_pieces.add(Square(square.letter, square.number))
+                    else:
+                        reachable_squares.add(Square(square.letter, square.number))
+        return(eatable_pieces, reachable_squares)
