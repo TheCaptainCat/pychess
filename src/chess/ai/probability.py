@@ -30,7 +30,9 @@ class Probability:
         """
         score = 0
         for p in self.board.get_pieces_by_color(self.color):
-            score += Manager.get_piece_score(p)
+            score += 1.5 * Manager.get_piece_score(p)
+        for p in self.board.get_pieces_by_color('w' if self.color == 'b' else 'b'):
+            score -= Manager.get_piece_score(p)
         return score
 
     def compute_score(self, alpha=-float('infinity'), beta=float('infinity')):
