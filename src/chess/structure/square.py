@@ -38,3 +38,7 @@ class Square:
     @staticmethod
     def str_to_square(s):
         return Square(Square.letter_to_int(s[0]), int(s[1]) - 1)
+
+    @staticmethod
+    def canvas_to_square(x, y):
+        return Square(x, y)
