@@ -43,8 +43,6 @@ class Manager:
         if isinstance(_piece, Knight):
             return self.move_knight(_piece)
         if isinstance(_piece, Pawn):
-            print("Pawn")
-            print(self.move_pawn(_piece))
             return self.move_pawn(_piece)
         return None
 

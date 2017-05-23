@@ -54,6 +54,8 @@ class GUI():
         self.left_top_board_corner_img = ImageTk.PhotoImage(Image.open("textures/left_top_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
         self.right_bottom_board_corner_img = ImageTk.PhotoImage(Image.open("textures/right_bottom_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
         self.left_bottom_board_corner_img = ImageTk.PhotoImage(Image.open("textures/left_bottom_board_corner.png").resize((self.square_dimension, self.square_dimension), Image.ANTIALIAS))
+        self.highlighted_black_square_img = ImageTk.PhotoImage(Image.open("textures/highlighted_black_square_img.png").resize((self.square_dimension, self.square_dimension),Image.ANTIALIAS))
+        self.highlighted_white_square_img = ImageTk.PhotoImage(Image.open("textures/highlighted_white_square_img.png").resize((self.square_dimension, self.square_dimension),Image.ANTIALIAS))
 
         self.white_rook = ImageTk.PhotoImage(Image.open("textures/white_rook.png"))
         self.white_bishop = ImageTk.PhotoImage(Image.open("textures/white_bishop.png"))
@@ -87,35 +89,6 @@ class GUI():
 
         self.window.mainloop()
 
-        """
-        
-        
-        running = True
-
-        
-        while running:
-            print(self.board)
-            print("{0} player, it is your turn.".format('White' if self.current_color == 'w' else 'Black'))
-            old, new = self.players[self.current_color].choose_move()
-            piece = self.board.get_piece(old.letter, old.number)
-            if piece is None:
-                print("First coordinates must designate a piece.")
-                continue
-            if piece.color != self.current_color:
-                print("You must choose your color! Ya dumb fuck...")
-                continue
-            if new not in self.manager.compute_move_set(piece):
-                print("RTFM!!!")
-                continue
-            self.board.move_piece(old, new)
-            if self.manager.is_checkmate(self.other_color()):
-                running = False
-            else:
-                self.switch_color()
-        print('Well done {0} player! Now you can execute your opponent and rape his wife.'.format('White' if self.current_color == 'w' else 'Black'))
-        """
-
-
     def create_canvas(self):
         canvas_width = (self.board.width + 2) * self.square_dimension
         canvas_height = (self.board.height + 2) * self.square_dimension
@@ -124,10 +97,11 @@ class GUI():
 
     def draw_board(self):
         i = 0
-
+        print("draw")
         for number in range(0, self.board.height + 2):
             for letter in range(0, self.board.width + 2):
                 x, y = self.get_x_y_coordinates(number, letter)
+                current_square = Square.canvas_to_square(letter - 1,number - 1)
                 if number in [0, self.board.height + 1] and letter in [0, self.board.width + 1]:
                     self.canvas.create_image(x, y, image=self.corners_img[i] , anchor='nw')
                     i = i + 1
@@ -144,9 +118,17 @@ class GUI():
                         self.canvas.create_image(x, y, image=self.right_board_edge_img, anchor='nw')
 
                 elif ((number + letter) % 2 == 0):
-                    self.canvas.create_image(x, y, image=self.white_square_img, anchor='nw')
+                    if self.source_of_the_move and current_square in self.manager.compute_move_set(self.source_of_the_move):
+                        self.canvas.create_image(x, y, image=self.highlighted_white_square_img, anchor='nw')
+                        print("highlight1")
+                    else:
+                        self.canvas.create_image(x, y, image=self.white_square_img, anchor='nw')
                 else:
-                    self.canvas.create_image(x, y, image=self.black_square_img, anchor='nw')
+                    if self.source_of_the_move and current_square in self.manager.compute_move_set(self.source_of_the_move):
+                        self.canvas.create_image(x, y, image=self.highlighted_black_square_img, anchor='nw')
+                        print("highlight2")
+                    else:
+                        self.canvas.create_image(x, y, image=self.black_square_img, anchor='nw')
 
     def get_x_y_coordinates(self, row, col):
         x = (col * self.square_dimension)
@@ -161,26 +143,24 @@ class GUI():
         current_square = Square.canvas_to_square(x - 1, y - 1)
 
         if self.source_of_the_move:
-            if self.validate_move(self.source_of_the_move, current_square):
                 if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
                     print("New Source")
                     self.source_of_the_move = current_piece
+                elif self.validate_move(self.source_of_the_move, current_square):
+                        self.board.move_piece(self.source_of_the_move.square, current_square)
+                        self.source_of_the_move = None
 
+                        if self.manager.is_checkmate(self.other_color()):
+                            print("Perdu")
+                        else:
+                            self.switch_color()
                 else:
-                    self.board.move_piece(self.source_of_the_move.square, current_square)
                     self.source_of_the_move = None
-
-                    if self.manager.is_checkmate(self.other_color()):
-                        print("Perdu")
-                    else:
-                        self.switch_color()
-            else:
-                self.source_of_the_move = None
         elif self.validate_source(current_piece):
             self.source_of_the_move = current_piece
             print("New Source2")
 
-        self.highlight_available_moves(self.source_of_the_move)
+        """self.highlight_available_moves(self.source_of_the_move)"""
         self.draw_board()
         self.draw_pieces()
 
@@ -211,9 +191,11 @@ class GUI():
                     x, y = self.get_x_y_coordinates(number + 1, letter + 1)
                     self.canvas.create_image(x, y, image=self.pieces_img[i], anchor='nw')
 
+    """ 
     def highlight_available_moves(self, piece):
-        pass
-
+        for square in self.manager.compute_move_set(piece):
+            pass
+    """
     def validate_move(self, old, new):
 
         is_valid = True
