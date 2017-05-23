@@ -189,13 +189,8 @@ class GUI():
                     elif isinstance(cur, Knight):
                         i = i + 5
                     x, y = self.get_x_y_coordinates(number + 1, letter + 1)
-                    self.canvas.create_image(x, y, image=self.pieces_img[i], anchor='nw')
+                    self.canvas.create_image(x + 40, y + 30, image=self.pieces_img[i], anchor='center')
 
-    """ 
-    def highlight_available_moves(self, piece):
-        for square in self.manager.compute_move_set(piece):
-            pass
-    """
     def validate_move(self, old, new):
 
         is_valid = True
