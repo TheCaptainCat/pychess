@@ -3,7 +3,6 @@ from chess.ai import AI
 from chess.computing import *
 from chess.structure import *
 
-
 class Console:
     """Manage a text game."""
 
