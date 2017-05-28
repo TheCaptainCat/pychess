@@ -153,6 +153,8 @@ class Manager:
 
     def is_checkmate(self, color):
         _king = self.board.get_first_piece(King, color)
+        if _king == None:
+            return False
         moves = self.compute_move_set(_king)
         moves.add(_king.square)
         o_moves = set()

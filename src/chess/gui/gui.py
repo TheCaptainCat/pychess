@@ -23,6 +23,7 @@ class GUI():
         self.source_of_the_move = None
         self.textures = {}
         self.canvas = None
+        self.game_over = False
 
     def switch_color(self):
         self.current_color = self.other_color()
@@ -99,6 +100,7 @@ class GUI():
         self.textures['black_queen'] = ImageTk.PhotoImage(Image.open("textures/black_queen.png"))
         self.textures['black_knight'] = ImageTk.PhotoImage(Image.open("textures/black_knight.png"))
         self.textures['table'] = ImageTk.PhotoImage(Image.open("textures/table.jpg"))
+        self.textures['grey_square'] = ImageTk.PhotoImage(Image.open("textures/grey_square.png"))
         self.corners_img = [self.textures['left_bottom_board_corner_img'],
                             self.textures['right_bottom_board_corner_img'],
                             self.textures['left_top_board_corner_img'], self.textures['right_top_board_corner_img']]
@@ -119,9 +121,9 @@ class GUI():
         self.window.mainloop()
 
     def create_canvas(self):
-        canvas_width = (self.board.width + 2) * self.square_dimension * 2
-        canvas_height = (self.board.height + 2) * self.square_dimension
-        self.canvas = Canvas(self.window, width=canvas_width, height=canvas_height)
+        self.canvas_width = (self.board.width + 2) * self.square_dimension * 2
+        self.canvas_height = (self.board.height + 2) * self.square_dimension
+        self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack()
 
     def draw_board(self):
@@ -199,27 +201,34 @@ class GUI():
         return x, y
 
     def square_on_click(self, event):
-        x, y = self.get_clicked_square(event)
-        current_piece = self.board.get_piece(x - 1 - 5, y - 1)
-        current_square = Square.canvas_to_square(x - 1 - 5, y - 1)
-        if self.source_of_the_move:
-            if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
-                self.source_of_the_move = current_piece
-            elif self.validate_move(self.source_of_the_move, current_square):
-                self.board.move_piece(self.source_of_the_move.square, current_square)
-                self.source_of_the_move = None
-                if self.manager.is_checkmate(self.other_color()):
-                    print("You lose!")
+        if not self.game_over:
+            x, y = self.get_clicked_square(event)
+            current_piece = self.board.get_piece(x - 1 - 5, y - 1)
+            current_square = Square.canvas_to_square(x - 1 - 5, y - 1)
+            if self.source_of_the_move:
+                if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
+                    self.source_of_the_move = current_piece
+                elif self.validate_move(self.source_of_the_move, current_square):
+                    self.board.move_piece(self.source_of_the_move.square, current_square)
+                    self.source_of_the_move = None
+                    if self.manager.is_checkmate(self.other_color()):
+                        print("You lose!")
+                    else:
+                        self.switch_color()
                 else:
-                    self.switch_color()
-            else:
-                self.source_of_the_move = None
-        elif self.validate_source(current_piece):
-            self.source_of_the_move = current_piece
-        self.clear_canvas()
-        self.draw_board()
-        self.draw_pieces()
-        self.draw_eaten_pieces()
+                    self.source_of_the_move = None
+            elif self.validate_source(current_piece):
+                self.source_of_the_move = current_piece
+            self.clear_canvas()
+            self.draw_board()
+            self.draw_pieces()
+            self.draw_eaten_pieces()
+
+            if self.board.get_first_piece(King, 'b') == None or self.manager.is_checkmate('b'):
+                self.display_game_over("Le joueur noir a perdu")
+            elif self.board.get_first_piece(King, 'w') == None or self.manager.is_checkmate('w'):
+                self.display_game_over("Le joueur blanc a perdu")
+
 
     def get_clicked_square(self, event):
         x = event.x // self.square_dimension
@@ -318,3 +327,14 @@ class GUI():
                         xw = xw + 1
                 self.canvas.create_image(x, y, image=self.textures[name], anchor='center')
 
+    def display_game_over(self, text):
+        x_canvas = self.canvas_width / 2
+        y_canvas = self.canvas_height / 2
+        self.game_over = True
+
+        for number in range(0, self.board.height + 2):
+            for letter in range(0, self.board.width + 2):
+                x, y = self.get_x_y_coordinates(number, letter + 5)
+                self.canvas.create_image(x, y, image=self.textures['grey_square'], anchor='nw')
+
+        self.canvas.create_text(x_canvas, y_canvas, text=text, fill="black", font=('Calibri', -80, 'bold'))
