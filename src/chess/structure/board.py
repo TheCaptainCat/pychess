@@ -1,5 +1,5 @@
 from .square import Square
-from chess.pieces import Pawn
+from chess.pieces import *
 
 class Board:
     """Represent a chess board."""
@@ -13,6 +13,7 @@ class Board:
         self.width = width
         self.height = height
         self.squares = {}
+        self.eaten_pieces = []
         for letter in range(0, self.width):
             for number in range(0, self.height):
                 self.set_piece(letter, number, None)
@@ -63,6 +64,8 @@ class Board:
             raise ValueError('Invalid coordinates')
         p = self.squares[old_c]
         self.squares[old_c] = None
+        if  isinstance(self.squares[new_c], Piece):
+            self.eaten_pieces.append(self.squares[new_c])
         self.squares[new_c] = p
         p.square = new_c
         if isinstance(p, Pawn):
