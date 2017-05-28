@@ -25,6 +25,8 @@ class GUI:
         self.textures = {}
         self.canvas = None
         self.game_over = False
+        self.canvas_width = 0
+        self.canvas_height = 0
 
     def switch_color(self):
         self.current_color = self.other_color()
@@ -232,9 +234,9 @@ class GUI:
         self.draw_eaten_pieces()
         self.draw_right_area()
 
-        if self.board.get_first_piece(King, 'b') == None or self.manager.is_checkmate('b'):
+        if self.manager.is_checkmate('b'):
             self.display_game_over("Le joueur noir a perdu")
-        elif self.board.get_first_piece(King, 'w') == None or self.manager.is_checkmate('w'):
+        elif self.manager.is_checkmate('w'):
             self.display_game_over("Le joueur blanc a perdu")
 
     def get_clicked_square(self, event):
@@ -291,32 +293,32 @@ class GUI:
         self.canvas.delete("all")
 
     def draw_right_area(self):
-        restart_button = Button(self.window, text="Recommencer", command=self.restart)
-        restart_button.configure( activebackground="#33B5E5", relief=FLAT, image=self.textures['restart_button'])
-        self.canvas.create_window(self.canvas_width * 0.875 , self.canvas_height * 0.75, window=restart_button,)
+        restart_button = Button(self.window, text="Restart", command=self.restart)
+        restart_button.configure(activebackground="#33B5E5", relief=FLAT, image=self.textures['restart_button'])
+        self.canvas.create_window(self.canvas_width * 0.875, self.canvas_height * 0.75, window=restart_button, )
 
     def draw_eaten_pieces(self):
         xb = xw = 1
         yb = 8
         yw = 4
 
-        for piece in self.board.eaten_pieces:
-            if piece is not None and isinstance(piece, Piece):
-                name = 'white_' if piece.color == 'w' else 'black_'
-                if isinstance(piece, Bishop):
+        for _piece in self.board.eaten_pieces:
+            if _piece is not None and isinstance(_piece, Piece):
+                name = 'white_' if _piece.color == 'w' else 'black_'
+                if isinstance(_piece, Bishop):
                     name += 'bishop'
-                elif isinstance(piece, Pawn):
+                elif isinstance(_piece, Pawn):
                     name += 'pawn'
-                elif isinstance(piece, King):
+                elif isinstance(_piece, King):
                     name += 'king'
-                elif isinstance(piece, Queen):
+                elif isinstance(_piece, Queen):
                     name += 'queen'
-                elif isinstance(piece, Knight):
+                elif isinstance(_piece, Knight):
                     name += 'knight'
-                elif isinstance(piece, Rook):
+                elif isinstance(_piece, Rook):
                     name += 'rook'
 
-                if piece.color == 'b':
+                if _piece.color == 'b':
                     x, y = self.get_x_y_coordinates(yb, xb)
                     if xb == 4:
                         xb = 1
