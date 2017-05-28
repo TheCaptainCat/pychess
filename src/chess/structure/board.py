@@ -98,3 +98,9 @@ class Board:
                     s += cur.char
             s += '\n'
         return s
+
+    def clear_board(self):
+        self.eaten_pieces = []
+        for letter in range(0, self.width):
+            for number in range(0, self.height):
+                self.set_piece(letter, number, None)

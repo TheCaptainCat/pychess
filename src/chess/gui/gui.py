@@ -223,6 +223,7 @@ class GUI():
             self.draw_board()
             self.draw_pieces()
             self.draw_eaten_pieces()
+            self.draw_right_area()
 
             if self.board.get_first_piece(King, 'b') == None or self.manager.is_checkmate('b'):
                 self.display_game_over("Le joueur noir a perdu")
@@ -284,11 +285,9 @@ class GUI():
         self.canvas.delete("all")
 
     def draw_right_area(self):
-        x, y = self.get_x_y_coordinates(0, self.board.width + 2)
-        """self.canvas.create_image(0, 0, image=self.textures['table'], anchor='nw')"""
-        for y_square in range(0, self.board.height + 2):
-            for x_square in range(self.board.width + 2, 2 * (self.board.width + 2)):
-                x, y = self.get_x_y_coordinates(y_square, x_square)
+        restart_button = Button(self.window, text="Recommencer", command=self.restart)
+        restart_button.configure(width=10, activebackground="#33B5E5", relief=FLAT)
+        self.canvas.create_window(self.canvas_width * 0.875 , self.canvas_height * 0.75, window=restart_button)
 
     def draw_eaten_pieces(self):
         xb = xw = 1
@@ -338,3 +337,20 @@ class GUI():
                 self.canvas.create_image(x, y, image=self.textures['grey_square'], anchor='nw')
 
         self.canvas.create_text(x_canvas, y_canvas, text=text, fill="black", font=('Calibri', -80, 'bold'))
+
+    def restart(self):
+
+
+        self.clear_canvas()
+        self.current_color = 'w'
+        self.board = Board(8, 8)
+        self.manager = Manager(self.board)
+        self.manager.setup_q_chess_board()
+        self.source_of_the_move = None
+        self.game_over = False
+
+        self.draw_board()
+        self.draw_pieces()
+        print("Restart")
+        self.draw_eaten_pieces()
+        self.draw_right_area()
