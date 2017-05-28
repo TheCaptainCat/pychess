@@ -226,16 +226,16 @@ class GUI:
                         self.source_of_the_move = None
                 elif self.validate_source(current_piece):
                     self.source_of_the_move = current_piece
-            self.clear_canvas()
-            self.draw_board()
-            self.draw_pieces()
-            self.draw_eaten_pieces()
-            self.draw_right_area()
+        self.clear_canvas()
+        self.draw_board()
+        self.draw_pieces()
+        self.draw_eaten_pieces()
+        self.draw_right_area()
 
-            if self.board.get_first_piece(King, 'b') == None or self.manager.is_checkmate('b'):
-                self.display_game_over("Le joueur noir a perdu")
-            elif self.board.get_first_piece(King, 'w') == None or self.manager.is_checkmate('w'):
-                self.display_game_over("Le joueur blanc a perdu")
+        if self.board.get_first_piece(King, 'b') == None or self.manager.is_checkmate('b'):
+            self.display_game_over("Le joueur noir a perdu")
+        elif self.board.get_first_piece(King, 'w') == None or self.manager.is_checkmate('w'):
+            self.display_game_over("Le joueur blanc a perdu")
 
     def get_clicked_square(self, event):
         x = event.x // self.square_dimension

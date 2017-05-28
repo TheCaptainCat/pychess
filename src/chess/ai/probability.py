@@ -68,6 +68,8 @@ class Probability:
                     self.score = fun(self.score, prob.compute_score(alpha, beta))
                     self.board.move_piece(p.square, old_p_position)
                     self.board.set_piece(m.letter, m.number, saved_piece)
+                    if saved_piece in self.board.eaten_pieces:
+                        self.board.eaten_pieces.remove(saved_piece)
                     if isinstance(p, Pawn):
                         p.first_move_done = old_pawn_state
                     self.children.add(prob)
