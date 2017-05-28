@@ -117,7 +117,7 @@ class GUI:
         self.draw_pieces()
         self.canvas.bind("<Button-1>", self.square_on_click)
         self.players[self.current_color] = HumanPlayer(self.board, self.current_color)
-        self.players[self.other_color()] = AI(self.board, self.other_color(), 2)
+        self.players[self.other_color()] = AI(self.board, self.other_color(), 3)
         self.draw_eaten_pieces()
         self.draw_right_area()
         self.window.mainloop()

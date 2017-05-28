@@ -2,6 +2,8 @@
 from chess.ai import AI
 from chess.computing import *
 from chess.structure import *
+from .human_player import HumanPlayer
+
 
 class Console:
     """Manage a text game."""
@@ -21,7 +23,7 @@ class Console:
     def launch_game(self):
         self.manager.setup_q_chess_board()
         print("Welcome to PyChess!")
-        self.players[self.current_color] = AI(self.board, self.current_color, 1)
+        self.players[self.current_color] = HumanPlayer(self.board, self.current_color)
         self.players[self.other_color()] = AI(self.board, self.other_color(), 3)
         running = True
         turn = 0
