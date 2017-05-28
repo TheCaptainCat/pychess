@@ -111,6 +111,7 @@ class GUI:
         self.manager.setup_q_chess_board()
         self.window = Tk()
         self.window.title('PyChess')
+        self.window.resizable(False, False)
         self.load_textures()
         self.create_canvas()
         self.draw_board()
