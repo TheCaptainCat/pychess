@@ -351,6 +351,8 @@ class GUI:
         self.board = Board(8, 8)
         self.manager = Manager(self.board)
         self.manager.setup_q_chess_board()
+        self.players[self.current_color] = HumanPlayer(self.board, self.current_color)
+        self.players[self.other_color()] = AI(self.board, self.other_color(), 3)
         self.source_of_the_move = None
         self.game_over = False
         self.draw_board()
