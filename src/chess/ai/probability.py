@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from chess.computing import Manager
+from chess.pieces import Pawn
 
 
 class Probability:
@@ -30,7 +31,7 @@ class Probability:
         """
         score = 0
         for p in self.board.get_pieces_by_color(self.color):
-            score += 1.5 * Manager.get_piece_score(p)
+            score += Manager.get_piece_score(p)
         for p in self.board.get_pieces_by_color('w' if self.color == 'b' else 'b'):
             score -= Manager.get_piece_score(p)
         return score
@@ -58,12 +59,17 @@ class Probability:
                 for m in self.manager.compute_move_set(p):
                     saved_piece = self.board.get_piece(m.letter, m.number)
                     old_p_position = p.square
+                    old_pawn_state = None
+                    if isinstance(p, Pawn):
+                        old_pawn_state = p.first_move_done
                     self.board.move_piece(p.square, m)
                     prob = Probability(self.board, self.depth - 1, self.color,
                                        'w' if self.current_color == 'b' else 'b', (old_p_position, m))
                     self.score = fun(self.score, prob.compute_score(alpha, beta))
                     self.board.move_piece(p.square, old_p_position)
                     self.board.set_piece(m.letter, m.number, saved_piece)
+                    if isinstance(p, Pawn):
+                        p.first_move_done = old_pawn_state
                     self.children.add(prob)
                     if self.color == self.current_color:
                         if self.score >= beta:
@@ -75,26 +81,15 @@ class Probability:
                             return self.score
                         else:
                             beta = min(beta, self.score)
-
         return self.score
 
     def get_best_child(self):
-        """Get the best possibility for the next move.
-        If the AI is playing, it returns the the possibility with the minimum opponent's score.
-        It not, it returns the the possibility with the maximum AI's score.
-        
-        :return: the best possibility
-        """
+        """Get the best possibility for the next move."""
 
         def get_score(prob):
             return prob.score
 
-        if self.color == self.current_color:
-            # If the AI is playing, the best possibility is the one with the minimum opponent's score.
-            return max(self.children, key=get_score)
-        else:
-            # If the opponent is playing, the best possibility is the one with the maximum AI's score.
-            return min(self.children, key=get_score)
+        return max(self.children, key=get_score)
 
     def __repr__(self):
         return str(self.board)
