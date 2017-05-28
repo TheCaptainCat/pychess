@@ -5,7 +5,7 @@ Il existe une version console et une version graphique.
 Afin de lancer la simulation, exécutez le fichier main.py avec un interpréteur Python 3.X.
 
 La console vous demande quelle version lancer, il est donc important de lancer le programme
-depuis une console.
+depuis une console. Sur Windows, il est conseillé d'utiliser le Powershell.
 
 ## VERSION CONSOLE ##
 Suivez ensuite les instructions sur la console.
