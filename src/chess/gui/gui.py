@@ -203,29 +203,28 @@ class GUI:
         return x, y
 
     def square_on_click(self, event):
-        if isinstance(self.players[self.current_color], AI):
-            moves = self.players[self.current_color].choose_move()
-            self.board.move_piece(moves[0], moves[1])
-            self.switch_color()
-        else:
-            if not self.game_over:
-                x, y = self.get_clicked_square(event)
-                current_piece = self.board.get_piece(x - 1 - 5, y - 1)
-                current_square = Square.canvas_to_square(x - 1 - 5, y - 1)
-                if self.source_of_the_move:
-                    if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
-                        self.source_of_the_move = current_piece
-                    elif self.validate_move(self.source_of_the_move, current_square):
-                        self.board.move_piece(self.source_of_the_move.square, current_square)
-                        self.source_of_the_move = None
-                        if self.manager.is_checkmate(self.other_color()):
-                            print("You lose!")
-                        else:
-                            self.switch_color()
-                    else:
-                        self.source_of_the_move = None
-                elif self.validate_source(current_piece):
+        if not self.game_over:
+            x, y = self.get_clicked_square(event)
+            current_piece = self.board.get_piece(x - 1 - 5, y - 1)
+            current_square = Square.canvas_to_square(x - 1 - 5, y - 1)
+            if self.source_of_the_move:
+                if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
                     self.source_of_the_move = current_piece
+                elif self.validate_move(self.source_of_the_move, current_square):
+                    self.board.move_piece(self.source_of_the_move.square, current_square)
+                    self.source_of_the_move = None
+                    if self.manager.is_checkmate(self.other_color()):
+                        print("You lose!")
+                    else:
+                        self.switch_color()
+                    if isinstance(self.players[self.current_color], AI):
+                        moves = self.players[self.current_color].choose_move()
+                        self.board.move_piece(moves[0], moves[1])
+                        self.switch_color()
+                else:
+                    self.source_of_the_move = None
+            elif self.validate_source(current_piece):
+                self.source_of_the_move = current_piece
         self.clear_canvas()
         self.draw_board()
         self.draw_pieces()
