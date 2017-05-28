@@ -24,6 +24,7 @@ class GUI:
         self.source_of_the_move = None
         self.textures = {}
         self.canvas = None
+        self.game_over = False
 
     def switch_color(self):
         self.current_color = self.other_color()
@@ -99,6 +100,9 @@ class GUI:
         self.textures['black_king'] = ImageTk.PhotoImage(Image.open("textures/black_king.png"))
         self.textures['black_queen'] = ImageTk.PhotoImage(Image.open("textures/black_queen.png"))
         self.textures['black_knight'] = ImageTk.PhotoImage(Image.open("textures/black_knight.png"))
+        self.textures['table'] = ImageTk.PhotoImage(Image.open("textures/table.jpg"))
+        self.textures['grey_square'] = ImageTk.PhotoImage(Image.open("textures/grey_square.png"))
+        self.textures['restart_button'] = ImageTk.PhotoImage(Image.open("textures/restart_button.png"))
         self.corners_img = [self.textures['left_bottom_board_corner_img'],
                             self.textures['right_bottom_board_corner_img'],
                             self.textures['left_top_board_corner_img'], self.textures['right_top_board_corner_img']]
@@ -114,19 +118,22 @@ class GUI:
         self.canvas.bind("<Button-1>", self.square_on_click)
         self.players[self.current_color] = HumanPlayer(self.board, self.current_color)
         self.players[self.other_color()] = AI(self.board, self.other_color(), 2)
+        self.draw_eaten_pieces()
+        self.draw_right_area()
         self.window.mainloop()
 
     def create_canvas(self):
-        canvas_width = (self.board.width + 2) * self.square_dimension
-        canvas_height = (self.board.height + 2) * self.square_dimension
-        self.canvas = Canvas(self.window, width=canvas_width, height=canvas_height)
+        self.canvas_width = (self.board.width + 2) * self.square_dimension * 2
+        self.canvas_height = (self.board.height + 2) * self.square_dimension
+        self.canvas = Canvas(self.window, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack()
 
     def draw_board(self):
+        self.canvas.create_image(0, 0, image=self.textures['table'], anchor='nw')
         i = j = k = l = m = 0
         for number in range(0, self.board.height + 2):
             for letter in range(0, self.board.width + 2):
-                x, y = self.get_x_y_coordinates(number, letter)
+                x, y = self.get_x_y_coordinates(number, letter + 5)
                 current_square = Square.canvas_to_square(letter - 1, number - 1)
                 if self.source_of_the_move:
                     moves = self.manager.compute_move_set(self.source_of_the_move)
@@ -201,26 +208,34 @@ class GUI:
             self.board.move_piece(moves[0], moves[1])
             self.switch_color()
         else:
-            x, y = self.get_clicked_square(event)
-            current_piece = self.board.get_piece(x - 1, y - 1)
-            current_square = Square.canvas_to_square(x - 1, y - 1)
-            if self.source_of_the_move:
-                if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
-                    self.source_of_the_move = current_piece
-                elif self.validate_move(self.source_of_the_move, current_square):
-                    self.board.move_piece(self.source_of_the_move.square, current_square)
-                    self.source_of_the_move = None
-                    if self.manager.is_checkmate(self.other_color()):
-                        print("You lose!")
+            if not self.game_over:
+                x, y = self.get_clicked_square(event)
+                current_piece = self.board.get_piece(x - 1 - 5, y - 1)
+                current_square = Square.canvas_to_square(x - 1 - 5, y - 1)
+                if self.source_of_the_move:
+                    if isinstance(current_piece, Piece) and self.source_of_the_move.color == current_piece.color:
+                        self.source_of_the_move = current_piece
+                    elif self.validate_move(self.source_of_the_move, current_square):
+                        self.board.move_piece(self.source_of_the_move.square, current_square)
+                        self.source_of_the_move = None
+                        if self.manager.is_checkmate(self.other_color()):
+                            print("You lose!")
+                        else:
+                            self.switch_color()
                     else:
-                        self.switch_color()
-                else:
-                    self.source_of_the_move = None
-            elif self.validate_source(current_piece):
-                self.source_of_the_move = current_piece
-        self.clear_canvas()
-        self.draw_board()
-        self.draw_pieces()
+                        self.source_of_the_move = None
+                elif self.validate_source(current_piece):
+                    self.source_of_the_move = current_piece
+            self.clear_canvas()
+            self.draw_board()
+            self.draw_pieces()
+            self.draw_eaten_pieces()
+            self.draw_right_area()
+
+            if self.board.get_first_piece(King, 'b') == None or self.manager.is_checkmate('b'):
+                self.display_game_over("Le joueur noir a perdu")
+            elif self.board.get_first_piece(King, 'w') == None or self.manager.is_checkmate('w'):
+                self.display_game_over("Le joueur blanc a perdu")
 
     def get_clicked_square(self, event):
         x = event.x // self.square_dimension
@@ -245,7 +260,7 @@ class GUI:
                         name += 'knight'
                     elif isinstance(cur, Rook):
                         name += 'rook'
-                    x, y = self.get_x_y_coordinates(self.board.height - number, self.board.width - letter)
+                    x, y = self.get_x_y_coordinates(self.board.height - number, self.board.width - letter + 5)
                     self.canvas.create_image(x + 40, y + 30, image=self.textures[name], anchor='center')
 
     def validate_move(self, old, new):
@@ -274,3 +289,70 @@ class GUI:
 
     def clear_canvas(self):
         self.canvas.delete("all")
+
+    def draw_right_area(self):
+        restart_button = Button(self.window, text="Recommencer", command=self.restart)
+        restart_button.configure( activebackground="#33B5E5", relief=FLAT, image=self.textures['restart_button'])
+        self.canvas.create_window(self.canvas_width * 0.875 , self.canvas_height * 0.75, window=restart_button,)
+
+    def draw_eaten_pieces(self):
+        xb = xw = 1
+        yb = 8
+        yw = 4
+
+        for piece in self.board.eaten_pieces:
+            if piece is not None and isinstance(piece, Piece):
+                name = 'white_' if piece.color == 'w' else 'black_'
+                if isinstance(piece, Bishop):
+                    name += 'bishop'
+                elif isinstance(piece, Pawn):
+                    name += 'pawn'
+                elif isinstance(piece, King):
+                    name += 'king'
+                elif isinstance(piece, Queen):
+                    name += 'queen'
+                elif isinstance(piece, Knight):
+                    name += 'knight'
+                elif isinstance(piece, Rook):
+                    name += 'rook'
+
+                if piece.color == 'b':
+                    x, y = self.get_x_y_coordinates(yb, xb)
+                    if xb == 4:
+                        xb = 1
+                        yb = yb - 1
+                    else:
+                        xb = xb + 1
+                else:
+                    x, y = self.get_x_y_coordinates(yw, xw)
+                    if xw == 4:
+                        xw = 1
+                        yw = yw - 1
+                    else:
+                        xw = xw + 1
+                self.canvas.create_image(x, y, image=self.textures[name], anchor='center')
+
+    def display_game_over(self, text):
+        x_canvas = self.canvas_width / 2
+        y_canvas = self.canvas_height / 2
+        self.game_over = True
+
+        for number in range(0, self.board.height + 2):
+            for letter in range(0, self.board.width + 2):
+                x, y = self.get_x_y_coordinates(number, letter + 5)
+                self.canvas.create_image(x, y, image=self.textures['grey_square'], anchor='nw')
+        self.canvas.create_text(x_canvas, y_canvas, text=text, fill="black", font=('Calibri', -80, 'bold'))
+
+    def restart(self):
+        self.clear_canvas()
+        self.current_color = 'w'
+        self.board = Board(8, 8)
+        self.manager = Manager(self.board)
+        self.manager.setup_q_chess_board()
+        self.source_of_the_move = None
+        self.game_over = False
+        self.draw_board()
+        self.draw_pieces()
+        print("Restart")
+        self.draw_eaten_pieces()
+        self.draw_right_area()
