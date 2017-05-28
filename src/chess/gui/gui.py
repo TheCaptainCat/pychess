@@ -101,6 +101,7 @@ class GUI():
         self.textures['black_knight'] = ImageTk.PhotoImage(Image.open("textures/black_knight.png"))
         self.textures['table'] = ImageTk.PhotoImage(Image.open("textures/table.jpg"))
         self.textures['grey_square'] = ImageTk.PhotoImage(Image.open("textures/grey_square.png"))
+        self.textures['restart_button'] = ImageTk.PhotoImage(Image.open("textures/restart_button.png"))
         self.corners_img = [self.textures['left_bottom_board_corner_img'],
                             self.textures['right_bottom_board_corner_img'],
                             self.textures['left_top_board_corner_img'], self.textures['right_top_board_corner_img']]
@@ -286,8 +287,8 @@ class GUI():
 
     def draw_right_area(self):
         restart_button = Button(self.window, text="Recommencer", command=self.restart)
-        restart_button.configure(width=10, activebackground="#33B5E5", relief=FLAT)
-        self.canvas.create_window(self.canvas_width * 0.875 , self.canvas_height * 0.75, window=restart_button)
+        restart_button.configure( activebackground="#33B5E5", relief=FLAT, image=self.textures['restart_button'])
+        self.canvas.create_window(self.canvas_width * 0.875 , self.canvas_height * 0.75, window=restart_button,)
 
     def draw_eaten_pieces(self):
         xb = xw = 1
