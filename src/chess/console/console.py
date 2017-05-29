@@ -37,10 +37,10 @@ class Console:
                 print("First coordinates must designate a piece.")
                 continue
             if piece.color != self.current_color:
-                print("You must choose your color! Ya dumb fuck...")
+                print("You must choose your color!")
                 continue
             if new not in self.manager.compute_move_set(piece):
-                print("RTFM!!!")
+                print("This move is not allowed.")
                 continue
             self.board.move_piece(old, new)
             if self.manager.is_checkmate(self.other_color()):
@@ -48,5 +48,5 @@ class Console:
             else:
                 self.switch_color()
         print(self.board)
-        print('Well done {0} player, you won in {1} turns! Now you can execute your opponent and rape his wife.'
-              .format('White' if self.current_color == 'w' else 'Black', turn))
+        print('Well done {0} player, you won in {1} turns!'.format(
+            'White' if self.current_color == 'w' else 'Black', turn))

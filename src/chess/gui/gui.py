@@ -271,7 +271,7 @@ class GUI:
         if not self.validate_source(_piece):
             is_valid = False
         elif new not in self.manager.compute_move_set(_piece):
-            print("RTFM!!!")
+            print("This move is not allowed.")
             is_valid = False
         elif not self.board.valid_coordinates(old.square.letter, old.square.number) \
                 or not self.board.valid_coordinates(new.letter, new.number):
@@ -285,7 +285,7 @@ class GUI:
             print("First coordinates must designate a piece.")
             is_valid = False
         elif _piece.color != self.current_color:
-            print("You must choose your color! Ya dumb fuck...")
+            print("You must choose your color!")
             is_valid = False
         return is_valid
 
